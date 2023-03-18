@@ -144,6 +144,10 @@ func getPublicIp() string {
 
 func getSubDomains() []alidns.Record {
 
+	client, err := alidns.NewClientWithAccessKey("cn-hangzhou", configModel.AccessId, configModel.AccessKey)
+	if err != nil {
+		log.Println(err.Error())
+	}
 	request := alidns.CreateDescribeDomainRecordsRequest()
 	request.Scheme = "https"
 
@@ -173,8 +177,11 @@ func updateSubDomain(subDomain *alidns.Record) {
 	request.Type = subDomain.Type
 	request.Value = subDomain.Value
 	request.TTL = requests.NewInteger64(subDomain.TTL)
-
-	_, err := client.UpdateDomainRecord(request)
+	client, err := alidns.NewClientWithAccessKey("cn-hangzhou", configModel.AccessId, configModel.AccessKey)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	_, err = client.UpdateDomainRecord(request)
 	if err != nil {
 		log.Print(err.Error())
 	}
