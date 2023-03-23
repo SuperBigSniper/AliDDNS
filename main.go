@@ -23,7 +23,6 @@ var configModel ConfigurationModel
 
 // 上一次的公有ip
 var lastPublicIp string
-var client *alidns.Client
 
 func GetLocalIp() string {
 	addrs, err := net.InterfaceAddrs()
@@ -41,13 +40,6 @@ func GetLocalIp() string {
 }
 
 func main() {
-
-	clientTmp, err := alidns.NewClientWithAccessKey("cn-hangzhou", configModel.AccessId, configModel.AccessKey)
-
-	if err != nil {
-		log.Fatalln("阿里云连接失败, 请检查你的AccessId和AccessKey是否正确")
-	}
-	client = clientTmp
 
 	initCommandModel()
 	loadConfig()
@@ -149,10 +141,18 @@ func getPublicIp() string {
 
 func getSubDomains() []alidns.Record {
 
+	client, err := alidns.NewClientWithAccessKey("cn-hangzhou", configModel.AccessId, configModel.AccessKey)
+	if err != nil {
+		log.Println(err.Error())
+	}
 	request := alidns.CreateDescribeDomainRecordsRequest()
 	request.Scheme = "https"
 
 	request.DomainName = configModel.MainDomain
+
+	if err != nil {
+		log.Fatalln("连接阿里云失败, 请检查你的AccessId和AccessKey是否正确", err)
+	}
 
 	response, err := client.DescribeDomainRecords(request)
 	if err != nil {
@@ -179,7 +179,12 @@ func updateSubDomain(subDomain *alidns.Record) {
 	request.Value = subDomain.Value
 	request.TTL = requests.NewInteger64(subDomain.TTL)
 
-	_, err := client.UpdateDomainRecord(request)
+	client, err := alidns.NewClientWithAccessKey("cn-hangzhou", configModel.AccessId, configModel.AccessKey)
+	if err != nil {
+		log.Fatalln("连接阿里云失败, 请检查你的AccessId和AccessKey是否正确", err)
+	}
+
+	_, err = client.UpdateDomainRecord(request)
 	if err != nil {
 		log.Print(err.Error())
 	}
