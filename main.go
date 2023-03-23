@@ -69,6 +69,11 @@ func update() {
 		log.Println("Ip地址没有发生改变, 不进行更新")
 		return
 	}
+
+	if publicIp == "" {
+		log.Println("Ip获取失败, 不进行更新")
+		return
+	}
 	subDomains := getSubDomains()
 	for _, sub := range subDomains {
 		if sub.Value != publicIp {
@@ -133,7 +138,7 @@ func getPublicIp() string {
 	resp, err := http.Get(publicUrl)
 	if err != nil {
 		log.Fatalf("获取公网 IP 出现错误，错误信息：%s", err)
-		os.Exit(-1)
+		return ""
 	}
 	defer resp.Body.Close()
 
