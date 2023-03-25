@@ -57,15 +57,16 @@ func update() {
 	log.Println("公网ip: " + publicIp)
 	// log.Println("本地获取的公网Ip: ", getLocalIp())
 
+	if publicIp == "" {
+		log.Println("Ip获取失败, 不进行更新")
+		return
+	}
+
 	if lastPublicIp == publicIp {
 		log.Println("Ip地址没有发生改变, 不进行更新")
 		return
 	}
 
-	if publicIp == "" {
-		log.Println("Ip获取失败, 不进行更新")
-		return
-	}
 	subDomains := getSubDomains()
 	for _, sub := range subDomains {
 		if sub.Value != publicIp {
@@ -84,6 +85,7 @@ func update() {
 }
 
 func intervalFunction() {
+	update()
 	tick := time.Tick(time.Second * time.Duration(*commandModel.Interval))
 	for {
 		<-tick
@@ -129,7 +131,7 @@ func getPublicIp() string {
 	}
 	resp, err := http.Get(publicUrl)
 	if err != nil {
-		log.Fatalf("获取公网 IP 出现错误，错误信息：%s", err)
+		log.Printf("获取公网 IP 出现错误，错误信息：%s", err)
 		return ""
 	}
 	defer resp.Body.Close()
