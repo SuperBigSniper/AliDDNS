@@ -1,0 +1,27 @@
+{
+  "AccessIdComment": "阿里云的 Access Id。",
+  "AccessId": "AccessId",
+  "AccessKeyComment": "阿里云的 Access Key。",
+  "AccessKey": "AccessKey",
+  "MainDomainComment": "主域名。",
+  "MainDomain": "example.com",
+  "SubDomainsComment": "需要批量变更的子域名记录集合。",
+  "SubDomains": [
+      {
+          "TypeComment": "子域名记录类型。",
+          "Type": "A",
+          "SubDomainComment": "子域名记录前缀。",
+          "SubDomain": "sub1",
+          "IntervalComment": "TTL 时间。",
+          "Interval": 600
+      },
+      {
+          "Type": "A",
+          "SubDomain": "sub2",
+          "Interval": 600
+      }
+  ],
+  // https://ipv4.netarm.com 只获取v4地址
+  // https://ipv6.netarm.com 只获取v6地址
+  "GetPublicIpUrl": "https://ip.netarm.com/"
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"io"
 	"io/ioutil"
 	"log"
 	"net"
@@ -136,7 +137,7 @@ func getPublicIp() string {
 	}
 	defer resp.Body.Close()
 
-	bytes, _ := ioutil.ReadAll(resp.Body)
+	bytes, _ := io.ReadAll(resp.Body)
 
 	return strings.Replace(string(bytes), "\n", "", -1)
 }
